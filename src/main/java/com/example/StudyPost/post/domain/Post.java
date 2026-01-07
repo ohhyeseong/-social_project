@@ -29,6 +29,8 @@ public class Post extends BaseEntity {
     @Column(nullable = false)
     private String content;
 
+    private String imageUrl; // S3 이미지 URL을 저장할 필드
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
@@ -37,9 +39,10 @@ public class Post extends BaseEntity {
     private List<Comment> comments = new ArrayList<>();
 
     @Builder
-    private Post(String title, String content, User user){
+    private Post(String title, String content, String imageUrl, User user){
         this.title = title;
         this.content = content;
+        this.imageUrl = imageUrl;
         this.user = user;
     }
 

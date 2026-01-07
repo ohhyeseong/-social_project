@@ -2,6 +2,7 @@ package com.example.StudyPost.post.service;
 
 import com.example.StudyPost.global.exception.CustomException;
 import com.example.StudyPost.global.exception.ErrorCode;
+import com.example.StudyPost.global.s3.S3UploaderService;
 import com.example.StudyPost.post.domain.Post;
 import com.example.StudyPost.post.dto.PostCreateRequestDto;
 import com.example.StudyPost.post.dto.PostResponseDto;
@@ -13,6 +14,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @Service
 @RequiredArgsConstructor
@@ -20,12 +24,20 @@ import org.springframework.transaction.annotation.Transactional;
 public class PostService {
 
     private final PostRepository postRepository;
+    private final S3UploaderService s3UploaderService; // S3UploaderService 주입
 
     @Transactional
-    public Long create(PostCreateRequestDto dto, User user){
+    public Long create(PostCreateRequestDto dto, MultipartFile image, User user) throws IOException {
+        String imageUrl = null;
+        // 이미지가 존재하면 S3에 업로드하고 URL을 받아옴
+        if (image != null && !image.isEmpty()) {
+            imageUrl = s3UploaderService.upload(image, "posts");
+        }
+
         Post post = Post.builder()
                 .title(dto.title())
                 .content(dto.content())
+                .imageUrl(imageUrl) // 이미지 URL 저장
                 .user(user)
                 .build();
 
@@ -45,7 +57,6 @@ public class PostService {
         } else {
             posts = postRepository.findByTitleContaining(keyword, pageable);
         }
-        // 엔티티 Page를 DTO Page로 변환
         return posts.map(PostResponseDto::from);
     }
 
@@ -55,7 +66,7 @@ public class PostService {
                 .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
 
         if (!post.getUser().getId().equals(user.getId())){
-            throw new CustomException(ErrorCode.VALIDATION_ERROR); // 추후 권한 관련 에러코드로 변경 권장
+            throw new CustomException(ErrorCode.VALIDATION_ERROR);
         }
 
         post.update(dto.title(), dto.content());
@@ -67,7 +78,6 @@ public class PostService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
 
-        // 수정: User 객체가 아닌 ID끼리 비교
         if(!post.getUser().getId().equals(user.getId())){
             throw new CustomException(ErrorCode.VALIDATION_ERROR);
         }

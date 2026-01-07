@@ -4,6 +4,8 @@ server:
 spring:
   application:
     name: StudyPost
+  profiles:
+    active: secret # secret 프로필 활성화
 
   datasource:
     url: jdbc:mysql://localhost:3306/20260107
@@ -24,10 +26,19 @@ spring:
       charset: UTF-8
       enabled: true
       force: true
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
 
   logging:
     level:
       org.hibernate.SQL: debug
       org.hibernate.orm.jdbc.bind: trace
 
-
+  # AWS 설정 (최신 방식) - 민감 정보는 application-secret.yaml로 이동
+  cloud:
+    aws:
+      region:
+        static: ap-northeast-2
+      stack:
+        auto: false

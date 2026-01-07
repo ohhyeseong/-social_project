@@ -12,9 +12,10 @@ public record PostResponseDto(
         String title,
         String content,
         String author,
+        String imageUrl, // 이미지 URL 필드 추가
         LocalDateTime createdAt,
         LocalDateTime updatedAt,
-        List<CommentResponseDto> comments // 댓글 목록 추가
+        List<CommentResponseDto> comments
 ) {
     public static PostResponseDto from(Post post) {
         return new PostResponseDto(
@@ -22,9 +23,9 @@ public record PostResponseDto(
                 post.getTitle(),
                 post.getContent(),
                 post.getUser().getNickname(),
+                post.getImageUrl(), // imageUrl 추가
                 post.getCreatedAt(),
                 post.getUpdatedAt(),
-                // comments 리스트를 CommentResponseDto 리스트로 변환
                 post.getComments().stream()
                         .map(CommentResponseDto::from)
                         .collect(Collectors.toList())

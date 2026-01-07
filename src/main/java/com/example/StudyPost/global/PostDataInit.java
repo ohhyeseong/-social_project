@@ -11,6 +11,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.io.IOException;
+
 @Configuration
 @RequiredArgsConstructor
 public class PostDataInit {
@@ -42,7 +44,13 @@ public class PostDataInit {
                         "테스트 제목 " + i,
                         "테스트 내용 " + i
                 );
-                postService.create(dto, user);
+                try {
+                    // 변경된 create 메서드 호출 (이미지는 null로 전달)
+                    postService.create(dto, null, user);
+                } catch (IOException e) {
+                    // 초기 데이터 생성 시에는 파일 I/O 예외가 발생할 일이 거의 없으므로 간단히 처리
+                    e.printStackTrace();
+                }
             }
         };
     }
