@@ -58,7 +58,7 @@ public class PostController {
     @GetMapping
     public ResponseEntity<ApiResponse<Page<PostResponseDto>>> getAllPosts(
             @RequestParam(required = false) String keyword,
-            @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable
+            @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable
     ) {
         Page<PostResponseDto> responseDtos = postService.getAll(keyword, pageable);
         return ResponseEntity.ok(ApiResponse.ok(responseDtos));

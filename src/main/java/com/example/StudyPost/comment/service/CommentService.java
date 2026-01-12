@@ -40,11 +40,11 @@ public class CommentService {
     @Transactional
     public Long updateComment(Long commentId, CommentUpdateRequestDto dto, User user) {
         Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND)); // COMMENT_NOT_FOUND가 없어서 일단 이걸로 대체
+                .orElseThrow(() -> new CustomException(ErrorCode.COMMENT_NOT_FOUND));
 
-        // 작성자 검증
+        // 작성자 검증(작성한 유저와 현재 수정할려고 하는 유저가 일치한지 확인)
         if (!comment.getUser().getId().equals(user.getId())) {
-            throw new CustomException(ErrorCode.VALIDATION_ERROR); // 권한 없음 에러
+            throw new CustomException(ErrorCode.UNAUTHORIZED); // 권한 없음 에러
         }
 
         comment.update(dto.content());
@@ -59,7 +59,7 @@ public class CommentService {
 
         // 작성자 검증
         if (!comment.getUser().getId().equals(user.getId())) {
-            throw new CustomException(ErrorCode.VALIDATION_ERROR);
+            throw new CustomException(ErrorCode.UNAUTHORIZED);
         }
 
         commentRepository.delete(comment);

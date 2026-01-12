@@ -28,10 +28,10 @@ public class CommentController {
     public ResponseEntity<ApiResponse<Long>> createComment(
             @PathVariable Long postId,
             @Valid @RequestBody CommentCreateRequestDto dto,
-            @AuthenticationPrincipal SecurityUser securityUser
+            @AuthenticationPrincipal SecurityUser securityUser // 현재 로그인한 유저의 정보
     ) {
         User user = getUser(securityUser);
-        Long commentId = commentService.createComment(postId, dto, user);
+        Long commentId = commentService.createComment(postId, dto, user); //
         return ResponseEntity.ok(ApiResponse.ok(commentId));
     }
 
@@ -61,9 +61,9 @@ public class CommentController {
     private User getUser(SecurityUser securityUser) {
         // 로그인하지 않은 사용자의 경우 securityUser가 null일 수 있음
         if (securityUser == null) {
-            throw new CustomException(ErrorCode.VALIDATION_ERROR); // 또는 UNAUTHORIZED
+            throw new CustomException(ErrorCode.UNAUTHORIZED);
         }
         return userRepository.findById(securityUser.getId())
-                .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND)); // USER_NOT_FOUND 에러코드 추가 권장
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND)); // USER_NOT_FOUND 에러코드 추가 권장
     }
 }

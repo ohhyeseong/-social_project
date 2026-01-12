@@ -17,7 +17,7 @@ public class S3UploaderService {
 
     private final S3Client s3Client;
 
-    @Value("${aws.s3.bucket}")
+    @Value("${spring.cloud.aws.s3.bucket}")
     private String bucket;
 
     public String upload(MultipartFile multipartFile, String dirName) throws IOException {
@@ -25,11 +25,11 @@ public class S3UploaderService {
             return null;
         }
 
-        String originalFilename = multipartFile.getOriginalFilename();
-        String storeFileName = createStoreFileName(originalFilename);
-        String key = dirName + "/" + storeFileName;
+        String originalFilename = multipartFile.getOriginalFilename();// 오리지널 파일 이름
+        String storeFileName = createStoreFileName(originalFilename);// 파일 이름 중복 방지 위해 UUID를 붙힘.
+        String key = dirName + "/" + storeFileName; //
 
-        PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+        PutObjectRequest putObjectRequest = PutObjectRequest.builder() // S3에 파일전송
                 .bucket(bucket)
                 .key(key)
                 .contentType(multipartFile.getContentType())

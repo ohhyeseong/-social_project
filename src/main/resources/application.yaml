@@ -7,6 +7,14 @@ spring:
   profiles:
     active: secret # secret 프로필 활성화
 
+#  decorator:
+#    datasource:
+#      p6spy:
+#        enable-logging: true
+#        # 쿼리 포맷팅을 위한 커스텀 설정 (Multiline 등)
+#        logging: slf4j
+#        multiline: true
+
   datasource:
     url: jdbc:mysql://localhost:3306/20260107
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -16,10 +24,12 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-    show-sql: true
     properties:
       hibernate:
-        format_sql: true
+        show_sql: true
+        format_sql: false
+        highlight_sql: true
+
 
   servlet:
     encoding:
@@ -32,8 +42,9 @@ spring:
 
   logging:
     level:
-      org.hibernate.SQL: debug
-      org.hibernate.orm.jdbc.bind: trace
+      org.hibernate.SQL: off
+      org.hibernate.orm.jdbc.bind: off
+      p6spy: info
 
   # AWS 설정 (최신 방식) - 민감 정보는 application-secret.yaml로 이동
   cloud:
