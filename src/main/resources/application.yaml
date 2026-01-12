@@ -40,6 +40,7 @@ spring:
       max-file-size: 10MB
       max-request-size: 10MB
 
+# P6SPY 로깅 확인용(유지보수 더 좋게 하기 위해 로그를 보기 쉽게 보여줌)
   logging:
     level:
       org.hibernate.SQL: off
